@@ -1,7 +1,7 @@
 module BimaDeployment
   class Deployment
     attr_accessor :git_tag, :logger
-    attr_reader :whoami, :package_archive, :s3_bucket
+    attr_reader :whoami, :package_archive, :s3_bucket, :git_repo_dir
 
     def initialize(git_tag:)
       @git_tag = git_tag
@@ -12,11 +12,8 @@ module BimaDeployment
 
       bucket_name = BimaDeployment.s3[:bucket_name]
       region = BimaDeployment.s3[:region]
-      @s3_bucket ||= Aws::S3::Bucket.new(bucket_name, region: region)
-    end
-
-    def git_repo_dir
-      `git rev-parse --show-toplevel`.strip
+      @s3_bucket = Aws::S3::Bucket.new(bucket_name, region: region)
+      @git_repo_dir = `git rev-parse --show-toplevel`.strip
     end
 
     def git_repo_name

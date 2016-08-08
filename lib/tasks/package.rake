@@ -1,13 +1,9 @@
-def root_dir
-  `git rev-parse --show-toplevel`.strip
-end
-
 def tmp_package_dir
-  File.join(root_dir, 'tmp', 'package')
+  File.join(`git rev-parse --show-toplevel`.strip, 'tmp', 'package')
 end
 
 def tmp_release_dir
-  File.join(root_dir, 'tmp', 'release')
+  File.join(`git rev-parse --show-toplevel`.strip, 'tmp', 'release')
 end
 
 namespace :package do
@@ -22,9 +18,9 @@ namespace :package do
     dpl = BimaDeployment::Deployment.new(git_tag: args[:git_tag])
 
     Dir.chdir(tmp_package_dir) do
-      sh %!rsync -a #{root_dir}/.git .!
+      sh %!rsync -a #{dpl.git_repo_dir}/.git .!
       sh %!git reset --hard #{dpl.git_tag}!
-      sh %!rsync -a #{root_dir}/client/node_modules client/.!  if dpl.client_app?
+      sh %!rsync -a #{dpl.git_repo_dir}/client/node_modules client/.!  if dpl.client_app?
 
       Bundler.with_clean_env do
         non_production_environments = Dir.glob("config/environments/*.rb").map {|e|
