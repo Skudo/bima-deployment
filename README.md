@@ -12,6 +12,22 @@ group :development do
 end
 ```
 
+You can add a `deployment.rb` initializer to fine tune the deployment
+configuration.
+
+```ruby
+BimaDeployment.excluded_files = %w(
+ config/settings.yml
+ config/aws.yml
+ config/crm.yml
+ config/database.yml
+ .gitignore
+ .travis.yml
+ .rspec
+)
+```
+
+
 ### Usage
 
 1. Commit **all** changes you want to deploy. You do not have to push your
