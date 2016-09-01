@@ -1,3 +1,11 @@
+filepath_deployment_initializer = Rails.root.join('config', 'initializers', 'deployment.rb')
+if File.exist?(filepath_deployment_initializer)
+  puts "Using deploment configuration from #{filepath_deployment_initializer}"
+  require filepath_deployment_initializer
+else
+  puts "No deploment configuration found => using defaults"
+end
+
 def tmp_package_dir
   File.join(`git rev-parse --show-toplevel`.strip, 'tmp', 'package')
 end
