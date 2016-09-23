@@ -1,11 +1,3 @@
-filepath_deployment_initializer = Rails.root.join('config', 'initializers', 'deployment.rb')
-if File.exist?(filepath_deployment_initializer)
-  puts "Using deploment configuration from #{filepath_deployment_initializer}"
-  require filepath_deployment_initializer
-else
-  puts "No deploment configuration found => using defaults"
-end
-
 def tmp_package_dir
   File.join(`git rev-parse --show-toplevel`.strip, 'tmp', 'package')
 end
@@ -77,6 +69,7 @@ desc "Package the app and upload to S3"
 task :package, [:git_tag] do |t, args|
   git_tag = args[:git_tag] || 'master'
 
+  BimaDeployment.load_configuration
   [
     "package:build",
     "package:upload",
