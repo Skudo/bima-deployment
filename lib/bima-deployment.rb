@@ -8,7 +8,7 @@ require 'bima_deployment/rails'
 
 module BimaDeployment
   mattr_accessor :logger, :s3, :configuration_file
-  mattr_accessor :excluded_files, :excluded_dirs
+  mattr_accessor :included, :excluded
 
   def self.configure
     yield self
@@ -40,7 +40,9 @@ module BimaDeployment
     region: 'eu-west-1'
   }
 
-  self.excluded_files = %w(
+  self.included = %w()
+
+  self.excluded = %w(
     config/settings.yml
     config/aws.yml
     config/crm.yml
@@ -48,8 +50,6 @@ module BimaDeployment
     .gitignore
     .travis.yml
     .rspec
-  )
-  self.excluded_dirs = %w(
     .git
     client/node_modules
     spec

@@ -23,10 +23,7 @@ namespace :package do
       sh %!rsync -a #{dpl.git_repo_dir}/client/node_modules client/.!  if dpl.client_app?
 
       Bundler.with_clean_env do
-        non_production_environments = Dir.glob("config/environments/*.rb").map {|e|
-          File.basename(e, ".*")
-        } - %w[production]
-        sh %!bundle install --quiet --without #{non_production_environments.join(" ")}!
+        sh %!bundle install --quiet --without development test!
         sh %!bundle package --quiet!
       end
 
@@ -36,13 +33,27 @@ namespace :package do
       end
     end
 
-    # excluded files and directories
-    BimaDeployment.excluded_files.each do |filename|
-      filepath = File.join(tmp_package_dir, filename)
-      rm filepath, verbose: false  if File.exists?(filepath)
+    # include files or directories
+    BimaDeployment.included.each do |name|
+      src = File.join(dpl.git_repo_dir, name)
+      dest = File.join(tmp_package_dir, name)
+
+      if File.exists?(src) && File.file?(src)
+        cp src, dest, verbose: true
+      else
+        cp_r src, dest, verbose: true
+      end
     end
-    BimaDeployment.excluded_dirs.each do |dirname|
-      rm_rf "#{tmp_package_dir}/#{dirname}", verbose: false
+
+    # excluded files and directories
+    BimaDeployment.excluded.each do |name|
+      filepath = File.join(tmp_package_dir, name)
+
+      if File.exists?(filepath) && File.file?(filepath)
+        rm filepath, verbose: false
+      else
+        rm_rf filepath, verbose: false
+      end
     end
   end
 
