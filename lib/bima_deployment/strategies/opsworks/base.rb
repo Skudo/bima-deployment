@@ -13,11 +13,10 @@ module BimaDeployment
           @deployment = nil
         end
 
-        def confirm
+        def confirm(current_revision)
           last_deployment = BimaDeployment::Opsworks::Deployment.last(app: app)
           user = last_deployment.user
           timestamp = DateTime.parse(last_deployment.created_at)
-          current_revision = app.app_source.url
 
           puts "Current source on OpsWorks: #{current_revision}"
           puts "Last deployment made by #{user} on #{timestamp.rfc822}."

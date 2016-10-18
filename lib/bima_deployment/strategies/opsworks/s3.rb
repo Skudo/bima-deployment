@@ -2,6 +2,10 @@ module BimaDeployment
   module Strategies
     module Opsworks
       class S3 < Base
+        def confirm(*)
+          super(app.app_source.url)
+        end
+
         def deploy
           package = BimaDeployment::Package.new(git_tag)
           package.build
