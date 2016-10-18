@@ -1,3 +1,5 @@
+logger = BimaDeployment.config.logger
+
 namespace :package do
   directory BimaDeployment::Package.releases_dir
 
@@ -8,7 +10,7 @@ namespace :package do
 
   task :upload, [:git_tag] do |_, args|
     package = BimaDeployment::Package.new(args[:git_tag])
-    package.upload
+    logger.info("Use '#{s3_url}' as repository URL in OpsWorks.") if package.upload
   end
 
   task :cleanup, [:git_tag] do |_, _|

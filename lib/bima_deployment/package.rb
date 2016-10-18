@@ -126,9 +126,10 @@ module BimaDeployment
 
       if s3_object.upload_file(release_path, s3_options)
         logger.info "... finished in #{(Time.now - start_time).to_i} seconds."
-        logger.info "Use '#{s3_url}' as Repository URL in OpsWorks."
+        true
       else
         logger.info "... failed."
+        false
       end
     end
 
