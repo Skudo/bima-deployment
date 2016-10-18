@@ -4,8 +4,22 @@ require 'rake'
 
 require 'bima_deployment/version'
 require 'bima_deployment/configuration'
+require 'bima_deployment/deployment'
 require 'bima_deployment/package'
 require 'bima_deployment/rails'
+
+require 'bima_deployment/notifications/base'
+require 'bima_deployment/notifications/slack'
+
+require 'bima_deployment/opsworks/base'
+require 'bima_deployment/opsworks/app'
+require 'bima_deployment/opsworks/configuration'
+require 'bima_deployment/opsworks/deployment'
+require 'bima_deployment/opsworks/stack'
+
+require 'bima_deployment/strategies/opsworks/base'
+require 'bima_deployment/strategies/opsworks/git'
+require 'bima_deployment/strategies/opsworks/s3'
 
 module BimaDeployment
   mattr_accessor :config
@@ -59,4 +73,6 @@ module BimaDeployment
   )
 
   self.config = config
+
+  BimaDeployment::Opsworks::Configuration.load_credentials
 end
