@@ -5,13 +5,13 @@ module BimaDeployment
 
     def initialize(git_tag:)
       @git_tag = git_tag
-      @logger = BimaDeployment.logger
+      @logger = BimaDeployment.config.logger
 
       @whoami = %x(whoami).strip
       @package_archive = "#{@git_tag}.tbz2".gsub('/','-')
 
-      bucket_name = BimaDeployment.s3[:bucket_name]
-      region = BimaDeployment.s3[:region]
+      bucket_name = BimaDeployment.config.s3[:bucket_name]
+      region = BimaDeployment.config.s3[:region]
       @s3_bucket = Aws::S3::Bucket.new(bucket_name, region: region)
       @git_repo_dir = `git rev-parse --show-toplevel`.strip
     end

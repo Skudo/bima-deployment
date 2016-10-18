@@ -3,21 +3,22 @@ require 'logger'
 require 'rake'
 
 require 'bima_deployment/version'
+require 'bima_deployment/configuration'
 require 'bima_deployment/deployment'
 require 'bima_deployment/rails'
 
 module BimaDeployment
-  mattr_accessor :logger, :s3, :configuration_file
-  mattr_accessor :included, :excluded
+  mattr_accessor :config
 
   def self.configure
-    yield self
+    self.config ||= Configuration.new
+    yield self.config
   end
 
   def self.load_configuration
     return  unless defined?(Rails)
 
-    filepath = Rails.root.join('config', 'initializers', self.configuration_file)
+    filepath = Rails.root.join('config', 'initializers', self.config.configuration_file)
     if File.exist?(filepath)
       puts "Using deploment configuration from #{filepath}"
       require filepath
@@ -33,16 +34,17 @@ module BimaDeployment
   logger.formatter = proc do |severity, datetime, progname, msg|
     "#{msg}\n"
   end
-  self.logger = logger
-  self.configuration_file = 'deployment.rb'
-  self.s3 = {
+  config = Configuration.new
+  config.logger = logger
+  config.configuration_file = 'deployment.rb'
+  config.s3 = {
     bucket_name: 'bima-releases-ireland',
     region: 'eu-west-1'
   }
 
-  self.included = %w()
+  config.included = %w()
 
-  self.excluded = %w(
+  config.excluded = %w(
     config/settings.yml
     config/aws.yml
     config/crm.yml
@@ -55,4 +57,6 @@ module BimaDeployment
     spec
     test
   )
+
+  self.config = config
 end
