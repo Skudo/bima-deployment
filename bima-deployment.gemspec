@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here:
   s.add_dependency 'aws-sdk', '~> 2.0'
+  s.add_dependency 'activesupport'
 
   # specify any development dependencies here:
   s.add_dependency 'rake'
