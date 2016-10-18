@@ -34,7 +34,7 @@ module BimaDeployment
       self.class.releases_dir(git_repository)
     end
 
-    def package_path
+    def release_path
       File.join(releases_dir, package_archive)
     end
 
@@ -99,14 +99,15 @@ module BimaDeployment
         end
       end
 
-      sh "cd #{package_dir} && tar cjf #{package_path} ."
+      sh "cd #{package_dir} && tar cjf #{release_path} ."
+      FileUtils.rm_f(package_dir)
     end
 
     def upload(options = {})
       s3_object = s3_bucket.object(s3_object_key)
 
       logger.info "Writing to s3://#{s3_object.bucket.name}/#{s3_object.key} ..."
-      raise "Package file #{package_path} is empty." unless File.size?(package_path)
+      raise "Package file #{release_path} is empty." unless File.size?(release_path)
 
       metadata = options[:metadata] || {}
       metadata.reverse_merge!(
@@ -115,7 +116,7 @@ module BimaDeployment
         upload_user: username
       ).stringify_keys
 
-      logger.info "Uploading #{package_path} (#{File.size(package_path) / 1024**2 } MB) ..."
+      logger.info "Uploading #{release_path} (#{File.size(release_path) / 1024**2 } MB) ..."
       start_time = Time.now
       s3_options = {
         content_type: "application/x-bzip2",
@@ -123,7 +124,7 @@ module BimaDeployment
         server_side_encryption: 'AES256',
       }
 
-      if s3_object.upload_file(package_path, s3_options)
+      if s3_object.upload_file(release_path, s3_options)
         logger.info "... finished in #{(Time.now - start_time).to_i} seconds."
         logger.info "Use '#{s3_url}' as Repository URL in OpsWorks."
       else
