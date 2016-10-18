@@ -27,7 +27,7 @@ module BimaDeployment
     def strategy
       return @strategy if defined?(@strategy)
 
-      strategy_name = BimaDeployment.config.strategy
+      strategy_name = BimaDeployment.config.deployment[:strategy]
       strategy = "bima_deployment/strategies/#{strategy_name}".camelcase
       raise "Unknown deployment strategy: #{strategy_name}" unless Object.const_defined?(strategy)
 
