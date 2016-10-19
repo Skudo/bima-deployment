@@ -5,7 +5,8 @@ module BimaDeployment
 
       def initialize(options = {})
         super
-        @webhook_uri = URI(options[:url])
+        url = options.delete(:url)
+        @webhook_uri = URI(url)
         @template = options[:template]
       end
 
