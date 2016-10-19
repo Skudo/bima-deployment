@@ -1,7 +1,7 @@
 module BimaDeployment
   class Deployment
-    attr_accessor :git_tag, :logger
-    attr_reader :environment
+    attr_accessor :logger
+    attr_reader :git_tag, :environment
 
     def initialize(environment, git_tag, strategy = nil)
       @environment = environment
