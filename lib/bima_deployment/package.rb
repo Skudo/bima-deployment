@@ -62,9 +62,7 @@ module BimaDeployment
         sh "rsync -a #{git_repository}/client/node_modules client/." if client_app?
 
         Bundler.with_clean_env do
-          environments = Dir.glob("config/environments/*.rb").map { |e| File.basename(e, ".*") }
-          non_production_environments = environments - %w(production)
-          sh "bundle install --quiet --without #{non_production_environments.join(" ")}"
+          sh "bundle install --quiet --without development test"
           sh 'bundle package --quiet'
         end
 
