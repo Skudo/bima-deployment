@@ -16,12 +16,8 @@ module BimaDeployment
       protected
 
       def self.set_credentials(access_key, secret_key)
-        if defined?(Aws)
-          credentials = Aws::Credentials.new(access_key, secret_key)
-          Aws.config.update(credentials: credentials)
-        elsif defined?(AWS)
-          AWS.config(access_key_id: access_key, secret_access_key: secret_key)
-        end
+        credentials = Aws::Credentials.new(access_key, secret_key)
+        Aws.config.update(credentials: credentials)
       end
     end
   end

@@ -6,11 +6,8 @@ module BimaDeployment
       end
 
       def self.client
-        @client ||= if defined?(Aws)
-                      ::Aws::OpsWorks::Client.new(region: region)
-                    elsif defined?(AWS)
-                      ::AWS::OpsWorks::Client.new(region: region)
-                    end
+        return @client if defined?(@client)
+        @client = ::Aws::OpsWorks::Client.new(region: region)
       end
 
       def self.region
