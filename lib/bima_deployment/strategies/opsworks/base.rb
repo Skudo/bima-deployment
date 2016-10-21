@@ -14,7 +14,7 @@ module BimaDeployment
         end
 
         def confirm(current_revision)
-          last_deployment = BimaDeployment::Opsworks::Deployment.last(app: app)
+          last_deployment = BimaDeployment::Opsworks::Deployment.last(app: app, client: client)
           user = last_deployment.user
           timestamp = DateTime.parse(last_deployment.created_at)
 
@@ -39,7 +39,8 @@ module BimaDeployment
         def deploy
           @deployment = BimaDeployment::Opsworks::Deployment.create(stack: stack,
                                                                     app: app,
-                                                                    comment: "\"#{git_tag}\", powered by rake task.")
+                                                                    comment: "\"#{git_tag}\", powered by rake task.",
+                                                                    client: client)
           logger.info("Deploying ref \"#{git_tag}\" on #{environment}.")
           poll_until_done
         end
@@ -65,13 +66,19 @@ module BimaDeployment
           BimaDeployment.config.deployment || {}
         end
 
+        def client
+          return @client if defined?(@client)
+          region = config[:region].presence || 'us-east-1'
+          @client = ::Aws::OpsWorks::Client.new(region: region)
+        end
+
         def stack_name
           config[:stack]
         end
 
         def stack
           return @stack if defined?(@stack)
-          @stack = BimaDeployment::Opsworks::Stack.find(stack_name: stack_name)
+          @stack = BimaDeployment::Opsworks::Stack.find(stack_name: stack_name, client: client)
         end
 
         def app_name
@@ -80,7 +87,7 @@ module BimaDeployment
 
         def app
           return @app if defined?(@app)
-          @app = BimaDeployment::Opsworks::App.find(stack: stack, app_name: app_name)
+          @app = BimaDeployment::Opsworks::App.find(stack: stack, app_name: app_name, client: client)
         end
 
         def poll_until_done
