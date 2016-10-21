@@ -17,7 +17,7 @@ module BimaDeployment
       end
 
       def self.last(app:)
-        response = BimaDeployment::Opsworks::Base.client.describe_deployments(app_id: app.app_id)
+        response = client.describe_deployments(app_id: app.app_id)
         last_deployment = response.deployments.first
         return nil if last_deployment.nil?
 
