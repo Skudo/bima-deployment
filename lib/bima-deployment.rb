@@ -11,7 +11,6 @@ require 'bima_deployment/rails'
 require 'bima_deployment/notifications/base'
 require 'bima_deployment/notifications/slack'
 
-require 'bima_deployment/opsworks/base'
 require 'bima_deployment/opsworks/app'
 require 'bima_deployment/opsworks/configuration'
 require 'bima_deployment/opsworks/deployment'

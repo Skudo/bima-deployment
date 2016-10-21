@@ -1,9 +1,9 @@
 module BimaDeployment
   module Opsworks
-    class Deployment < Base
-      attr_reader :deployment_id
+    class Deployment
+      attr_reader :client, :deployment_id
 
-      def self.create(stack:, app:, comment: '')
+      def self.create(stack:, app:, comment: '', client:)
         deployment = client.create_deployment(stack_id: stack.stack_id,
                                               app_id: app.app_id,
                                               command: {
@@ -13,19 +13,20 @@ module BimaDeployment
                                                 }
                                               },
                                               comment: comment)
-        new(deployment.deployment_id)
+        new(deployment.deployment_id, client)
       end
 
-      def self.last(app:)
+      def self.last(app:, client:)
         response = client.describe_deployments(app_id: app.app_id)
         last_deployment = response.deployments.first
         return nil if last_deployment.nil?
 
-        new(last_deployment.deployment_id)
+        new(last_deployment.deployment_id, client)
       end
 
-      def initialize(deployment_id)
+      def initialize(deployment_id, client)
         @deployment_id = deployment_id
+        @client = client
         fetch
       end
 
