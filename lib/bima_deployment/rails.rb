@@ -3,6 +3,7 @@ module BimaDeployment
     # @private
     class Railtie < Rails::Railtie
       rake_tasks do
+        load 'tasks/deploy.rake'
         load 'tasks/package.rake'
       end
 
