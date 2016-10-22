@@ -1,9 +1,10 @@
 module BimaDeployment
   module Opsworks
     class Configuration
-      def self.load_credentials
+      def self.load_credentials(profile = nil)
         begin
-          shared_credentials = Aws::SharedCredentials.new(profile_name: 'bima')
+          profile ||= 'bima'
+          shared_credentials = Aws::SharedCredentials.new(profile_name: profile)
         rescue Aws::Errors::NoSuchProfileError
           shared_credentials = Aws::SharedCredentials.new(profile_name: 'default')
         end
