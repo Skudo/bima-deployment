@@ -2,15 +2,13 @@ module BimaDeployment
   module Opsworks
     class Configuration
       def self.load_credentials
-        credentials_path = File.expand_path('~/.aws/credentials')
-        config = {}.with_indifferent_access
-
-        File.readlines(credentials_path).select { |line| line.starts_with?('aws') }.each do |line|
-          key, value = line.split('=').map(&:strip)
-          config[key] = value
+        begin
+          shared_credentials = Aws::SharedCredentials.new(profile_name: 'bima')
+        rescue Aws::Errors::NoSuchProfileError
+          shared_credentials = Aws::SharedCredentials.new(profile_name: 'default')
         end
 
-        set_credentials(config[:aws_access_key_id], config[:aws_secret_access_key])
+        Aws.config.update(credentials: shared_credentials.credentials)
       end
 
       protected
