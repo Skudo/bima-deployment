@@ -10,7 +10,7 @@ namespace :package do
 
   task :upload, [:git_tag] do |_, args|
     package = BimaDeployment::Package.new(args[:git_tag])
-    logger.info("Use '#{s3_url}' as repository URL in OpsWorks.") if package.upload
+    logger.info("Use '#{package.s3_url}' as repository URL in OpsWorks.") if package.upload
   end
 
   task :cleanup, [:git_tag] do |_, _|
