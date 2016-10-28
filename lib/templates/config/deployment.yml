@@ -1,0 +1,29 @@
+defaults:
+  deployment: &deployment_defaults
+    strategy: 'opsworks/s3'
+  notification: &notification_defaults
+    slack:
+      url: 'https://hooks.slack.com/services/get-your-own-url'
+      enabled: true
+
+development:
+  deployment:
+    <<: *deployment_defaults
+    stack: 'STACK (Staging)'
+    app: 'APP_develop'
+  notification:
+
+staging:
+  deployment:
+    <<: *deployment_defaults
+    stack: 'STACK (Staging)'
+    app: 'APP_staging'
+  notification:
+
+production:
+  deployment:
+    <<: *deployment_defaults
+    stack: 'STACK (Production)'
+    app: 'APP'
+  notification:
+    <<: *notification_defaults
