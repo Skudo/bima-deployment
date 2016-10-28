@@ -3,7 +3,7 @@ defaults:
     strategy: 'opsworks/s3'
   notification: &notification_defaults
     slack:
-      url: 'https://hooks.slack.com/services/get-your-own-url'
+      url: 'SLACK_URL'
       enabled: true
 
 development:
