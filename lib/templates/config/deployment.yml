@@ -1,29 +1,29 @@
 defaults:
   deployment: &deployment_defaults
-    strategy: 'opsworks/s3'
+    strategy: '<%= options[:strategy] %>'
   notification: &notification_defaults
     slack:
-      url: 'SLACK_URL'
-      enabled: true
+      url: '<%= options[:slack] %>'
+      enabled: <%= options[:notifications] %>
 
 development:
   deployment:
     <<: *deployment_defaults
-    stack: 'STACK (Staging)'
-    app: 'APP_develop'
+    stack: '<%= name %> (Staging)'
+    app: '<%= name.downcase %>_develop'
   notification:
 
 staging:
   deployment:
     <<: *deployment_defaults
-    stack: 'STACK (Staging)'
-    app: 'APP_staging'
+    stack: '<%= name %> (Staging)'
+    app: '<%= name.downcase %>_staging'
   notification:
 
 production:
   deployment:
     <<: *deployment_defaults
-    stack: 'STACK (Production)'
-    app: 'APP'
+    stack: '<%= name %> (Production)'
+    app: '<%= name.downcase %>'
   notification:
     <<: *notification_defaults
