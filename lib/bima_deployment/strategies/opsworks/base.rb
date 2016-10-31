@@ -15,6 +15,8 @@ module BimaDeployment
 
         def confirm(current_revision)
           last_deployment = BimaDeployment::Opsworks::Deployment.last(app: app, client: client)
+          return if last_deployment.nil?
+
           user = last_deployment.user
           timestamp = DateTime.parse(last_deployment.created_at)
 
