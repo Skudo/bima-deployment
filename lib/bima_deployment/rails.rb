@@ -1,19 +1,21 @@
 module BimaDeployment
   if Object.const_defined?(:Rails)
-    class InstallGenerator < Rails::Generators::NamedBase
-      source_root File.expand_path('../../templates', __FILE__)
+    if Rails.const_defined?(:Generators)
+      class InstallGenerator < Rails::Generators::NamedBase
+        source_root File.expand_path('../../templates', __FILE__)
 
-      class_option :strategy, type: :string, default: 'opsworks/s3'
+        class_option :strategy, type: :string, default: 'opsworks/s3'
 
-      class_option :notifications, type: :boolean, default: true
-      class_option :slack, type: :string, default: 'https://hooks.slack.com/services/get-your-own-url'
+        class_option :notifications, type: :boolean, default: true
+        class_option :slack, type: :string, default: 'https://hooks.slack.com/services/get-your-own-url'
 
-      def copy_files
-        config_files = %w(
-          config/deployment.yml
-          config/initializers/deployment.rb
-        )
-        config_files.each { |config_file| template(config_file) }
+        def copy_files
+          config_files = %w(
+            config/deployment.yml
+            config/initializers/deployment.rb
+          )
+          config_files.each { |config_file| template(config_file) }
+        end
       end
     end
 
