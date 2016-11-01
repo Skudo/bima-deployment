@@ -5,7 +5,7 @@ end
 namespace :deploy do
   %i(development staging production).each do |environment|
     desc "Deploy to #{environment} environment on OpsWorks."
-    task environment, [:git_tag] do |_, args|
+    task environment, [:git_tag] => :environment do |_, args|
       BimaDeployment.load_configuration
       git_tag = args[:git_tag] || default_git_tag
       deployment = BimaDeployment::Deployment.new(environment, git_tag)
