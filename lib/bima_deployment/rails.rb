@@ -12,7 +12,6 @@ module BimaDeployment
         def copy_files
           config_files = %w(
             config/deployment.yml
-            config/initializers/deployment.rb
           )
           config_files.each { |config_file| template(config_file) }
         end
