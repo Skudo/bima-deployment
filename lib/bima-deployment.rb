@@ -32,16 +32,18 @@ module BimaDeployment
     return  unless defined?(Rails)
 
     yaml_path = Rails.root.join('config', 'deployment.yml')
-    deployment_config = YAML.load(File.read(yaml_path)).with_indifferent_access
-    deployment_config = deployment_config[environment] || {}
+    if File.exists?(yaml_path)
+      deployment_config = YAML.load(File.read(yaml_path)).with_indifferent_access
+      deployment_config = deployment_config[environment] || {}
 
-    self.configure do |config|
-      config.deployment = deployment_config[:deployment]
-      config.notification = deployment_config[:notification]
+      self.configure do |config|
+        config.deployment = deployment_config[:deployment]
+        config.notification = deployment_config[:notification]
+      end
     end
 
     initializer_path = Rails.root.join('config', 'initializers', self.config.configuration_file)
-    if File.exist?(initializer_path)
+    if File.exists?(initializer_path)
       puts "Using deployment configuration from #{initializer_path}"
       require initializer_path
     else
