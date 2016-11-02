@@ -1,5 +1,10 @@
 ## Changelog
 
+#### 2.0.2
+- bugfix for building packages not cleaning up properly
+- bugfix for missing `config/deployment.yml` file
+- deployments automagically invoke database migrations
+
 #### 2.0.1
 - bugfix for projects without a `config/deployment.yml` file yet
 
