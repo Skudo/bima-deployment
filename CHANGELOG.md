@@ -1,5 +1,8 @@
 ## Changelog
 
+#### 2.0.1
+- bugfix for projects without a `config/deployment.yml` file yet
+
 #### 2.0.0
 - minimum supported `aws-sdk` version now is 2.4.0 (was: 2.0.0)      
 - added `deploy` rake tasks
