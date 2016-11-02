@@ -1,62 +1,37 @@
 module BimaDeployment
   class Deployment
-    attr_accessor :git_tag, :logger
-    attr_reader :whoami, :package_archive, :s3_bucket, :git_repo_dir
+    attr_accessor :logger
+    attr_reader :git_tag, :environment
 
-    def initialize(git_tag:)
+    def initialize(environment, git_tag, strategy = nil)
+      @environment = environment
       @git_tag = git_tag
-      @logger = BimaDeployment.logger
-
-      @whoami = %x(whoami).strip
-      @package_archive = "#{@git_tag}.tbz2".gsub('/','-')
-
-      bucket_name = BimaDeployment.s3[:bucket_name]
-      region = BimaDeployment.s3[:region]
-      @s3_bucket = Aws::S3::Bucket.new(bucket_name, region: region)
-      @git_repo_dir = `git rev-parse --show-toplevel`.strip
+      @strategy = strategy unless strategy.nil?
+      @logger = BimaDeployment.config.logger
     end
 
-    def git_repo_name
-      File.basename(self.git_repo_dir)
+    def confirm
+      strategy.confirm
     end
 
-    def git_rev
-      `git rev-parse HEAD`.strip
+    def deploy
+      strategy.deploy
     end
 
-    def info_now
-      Time.now.iso8601
+    def notify
+      strategy.notify
     end
 
-    def client_app?
-      filepath = File.join(git_repo_dir, 'client', 'package.json')
-      File.exists?(filepath)
-    end
+    protected
 
-    def upload(s3_object, file_path, options = {})
-      logger.info "Writing to s3://#{s3_object.bucket.name}/#{s3_object.key}"
-      raise "Package file #{file_path} is empty" unless File.size?(file_path)
+    def strategy
+      return @strategy if defined?(@strategy)
 
-      metadata = options[:metadata] || {
-        commit: self.git_rev,
-        package_date: self.info_now,
-        upload_user: self.whoami,
-      }.stringify_keys
+      strategy_name = BimaDeployment.config.deployment[:strategy]
+      strategy = "bima_deployment/strategies/#{strategy_name}".camelcase
+      raise "Unknown deployment strategy: #{strategy_name}" unless Object.const_defined?(strategy)
 
-      logger.info "Uploading #{file_path} (#{File.size(file_path) / 1024 / 1024 } MB)"
-      start_time = Time.now
-      s3_options = {
-        content_type: "application/x-bzip2",
-        metadata: metadata,
-        server_side_encryption: 'AES256',
-      }
-
-      if s3_object.upload_file(file_path, s3_options)
-        logger.info "... finished in #{(Time.now - start_time).to_i}s."
-        logger.info "Use 'https://#{s3_bucket.name}.s3.amazonaws.com/#{s3_object.key}' as Repository URL in OpsWorks"
-      else
-        logger.info "... failed."
-      end
+      @strategy = strategy.constantize.new(environment, git_tag)
     end
   end
 end

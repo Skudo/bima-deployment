@@ -3,26 +3,49 @@ require 'logger'
 require 'rake'
 
 require 'bima_deployment/version'
+require 'bima_deployment/configuration'
 require 'bima_deployment/deployment'
+require 'bima_deployment/package'
 require 'bima_deployment/rails'
 
+require 'bima_deployment/notifications/base'
+require 'bima_deployment/notifications/slack'
+
+require 'bima_deployment/opsworks/app'
+require 'bima_deployment/opsworks/configuration'
+require 'bima_deployment/opsworks/deployment'
+require 'bima_deployment/opsworks/stack'
+
+require 'bima_deployment/strategies/opsworks/base'
+require 'bima_deployment/strategies/opsworks/git'
+require 'bima_deployment/strategies/opsworks/s3'
+
 module BimaDeployment
-  mattr_accessor :logger, :s3, :configuration_file
-  mattr_accessor :included, :excluded
+  mattr_accessor :config
 
   def self.configure
-    yield self
+    self.config ||= Configuration.new
+    yield self.config
   end
 
-  def self.load_configuration
+  def self.load_configuration(environment = 'development')
     return  unless defined?(Rails)
 
-    filepath = Rails.root.join('config', 'initializers', self.configuration_file)
-    if File.exist?(filepath)
-      puts "Using deploment configuration from #{filepath}"
-      require filepath
+    yaml_path = Rails.root.join('config', 'deployment.yml')
+    deployment_config = YAML.load(File.read(yaml_path)).with_indifferent_access
+    deployment_config = deployment_config[environment] || {}
+
+    self.configure do |config|
+      config.deployment = deployment_config[:deployment]
+      config.notification = deployment_config[:notification]
+    end
+
+    initializer_path = Rails.root.join('config', 'initializers', self.config.configuration_file)
+    if File.exist?(initializer_path)
+      puts "Using deployment configuration from #{initializer_path}"
+      require initializer_path
     else
-      puts "No deploment configuration found => using defaults"
+      puts "No deployment configuration found => using defaults"
     end
   end
 
@@ -33,16 +56,17 @@ module BimaDeployment
   logger.formatter = proc do |severity, datetime, progname, msg|
     "#{msg}\n"
   end
-  self.logger = logger
-  self.configuration_file = 'deployment.rb'
-  self.s3 = {
+  config = Configuration.new
+  config.logger = logger
+  config.configuration_file = 'deployment.rb'
+  config.s3 = {
     bucket_name: 'bima-releases-ireland',
     region: 'eu-west-1'
   }
 
-  self.included = %w()
+  config.included = %w()
 
-  self.excluded = %w(
+  config.excluded = %w(
     config/settings.yml
     config/aws.yml
     config/crm.yml
@@ -55,4 +79,8 @@ module BimaDeployment
     spec
     test
   )
+
+  self.config = config
+
+  BimaDeployment::Opsworks::Configuration.load_credentials
 end

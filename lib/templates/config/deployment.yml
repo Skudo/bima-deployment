@@ -1,0 +1,29 @@
+defaults:
+  deployment: &deployment_defaults
+    strategy: '<%= options[:strategy] %>'
+  notification: &notification_defaults
+    slack:
+      url: '<%= options[:slack] %>'
+      enabled: <%= options[:notifications] %>
+
+development:
+  deployment:
+    <<: *deployment_defaults
+    stack: '<%= name %> (Staging)'
+    app: '<%= name.downcase %>_develop'
+  notification:
+
+staging:
+  deployment:
+    <<: *deployment_defaults
+    stack: '<%= name %> (Staging)'
+    app: '<%= name.downcase %>_staging'
+  notification:
+
+production:
+  deployment:
+    <<: *deployment_defaults
+    stack: '<%= name %> (Production)'
+    app: '<%= name.downcase %>'
+  notification:
+    <<: *notification_defaults
