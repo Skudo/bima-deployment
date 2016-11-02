@@ -27,12 +27,6 @@ module BimaDeployment
         end
 
         initializer 'bima_deployment.initialize' do |app|
-          deployment_config = app.config_for(:deployment).with_indifferent_access
-
-          BimaDeployment.configure do |config|
-            config.deployment = deployment_config[:deployment]
-            config.notification = deployment_config[:notification]
-          end
         end
       end
     end
