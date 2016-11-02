@@ -28,15 +28,24 @@ module BimaDeployment
     yield self.config
   end
 
-  def self.load_configuration
+  def self.load_configuration(environment = 'development')
     return  unless defined?(Rails)
 
-    filepath = Rails.root.join('config', 'initializers', self.config.configuration_file)
-    if File.exist?(filepath)
-      puts "Using deploment configuration from #{filepath}"
-      require filepath
+    yaml_path = Rails.root.join('config', 'deployment.yml')
+    deployment_config = YAML.load(File.read(yaml_path)).with_indifferent_access
+    deployment_config = deployment_config[environment] || {}
+
+    self.configure do |config|
+      config.deployment = deployment_config[:deployment]
+      config.notification = deployment_config[:notification]
+    end
+
+    initializer_path = Rails.root.join('config', 'initializers', self.config.configuration_file)
+    if File.exist?(initializer_path)
+      puts "Using deployment configuration from #{initializer_path}"
+      require initializer_path
     else
-      puts "No deploment configuration found => using defaults"
+      puts "No deployment configuration found => using defaults"
     end
   end
 
