@@ -9,7 +9,7 @@ module BimaDeployment
                                               command: {
                                                 name: 'deploy',
                                                 args: {
-                                                  'migrate' => ['false']
+                                                  'migrate' => ['true']
                                                 }
                                               },
                                               comment: comment)

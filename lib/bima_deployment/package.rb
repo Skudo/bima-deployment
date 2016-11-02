@@ -52,7 +52,7 @@ module BimaDeployment
     end
 
     def build
-      FileUtils.rm_f(package_dir)
+      FileUtils.rm_rf(package_dir)
       FileUtils.mkdir_p(package_dir)
       FileUtils.mkdir_p(releases_dir)
 
@@ -100,7 +100,7 @@ module BimaDeployment
       end
 
       sh "cd #{package_dir} && tar cjf #{release_path} ."
-      FileUtils.rm_f(package_dir)
+      FileUtils.rm_rf(package_dir)
     end
 
     def upload(options = {})
