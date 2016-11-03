@@ -69,10 +69,6 @@ module BimaDeployment
   config.included = %w()
 
   config.excluded = %w(
-    config/settings.yml
-    config/aws.yml
-    config/crm.yml
-    config/database.yml
     .gitignore
     .travis.yml
     .rspec
