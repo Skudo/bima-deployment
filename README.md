@@ -8,7 +8,7 @@ Add this to your Gemfile:
 
 ```ruby
 group :development do
-  gem 'bima-deployment', git: 'https://github.com/jdahlke/bima-deployment.git', tag: '2.0.2'
+  gem 'bima-deployment', git: 'https://github.com/jdahlke/bima-deployment.git', tag: '2.0.3'
 end
 ```
 
