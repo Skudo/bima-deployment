@@ -1,5 +1,8 @@
 ## Changelog
 
+#### 2.0.3
+- bugfix for missing `config` files
+
 #### 2.0.2
 - bugfix for building packages not cleaning up properly
 - bugfix for missing `config/deployment.yml` file
