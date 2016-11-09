@@ -66,9 +66,11 @@ module BimaDeployment
         sh "rsync -a #{git_repository}/client/node_modules client/." if client_app?
 
         Bundler.with_clean_env do
-          sh "bundle install --quiet --without development test"
-          sh 'bundle package --quiet'
+          sh 'bundle package --all --quiet'
+          sh 'bundle install --quiet --without development test'
+          sh 'bundle config --local cache_all false'
         end
+
 
         if client_app?
           sh 'cd client && npm install > /dev/null'
