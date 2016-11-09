@@ -1,6 +1,7 @@
 module BimaDeployment
   class Package
     attr_accessor :git_tag, :logger
+    attr_reader   :included, :excluded
 
     def self.package_dir(base_dir = git_repository)
       File.join(base_dir, 'tmp', 'package')
@@ -24,6 +25,9 @@ module BimaDeployment
       bucket_name = BimaDeployment.config.s3[:bucket_name]
       region = BimaDeployment.config.s3[:region]
       @s3_bucket = Aws::S3::Bucket.new(bucket_name, region: region)
+
+      @included = BimaDeployment.config.package[:included] || []
+      @excluded = BimaDeployment.config.package[:excluded] || []
     end
 
     def package_dir
@@ -73,7 +77,7 @@ module BimaDeployment
       end
 
       # include files or directories
-      BimaDeployment.config.included.each do |name|
+      included.each do |name|
         src = File.join(git_repository, name)
         dest = File.join(package_dir, name)
 
@@ -87,7 +91,7 @@ module BimaDeployment
       end
 
       # excluded files and directories
-      BimaDeployment.config.excluded.each do |name|
+      excluded.each do |name|
         path = File.join(package_dir, name)
 
         if File.exists?(path)
@@ -133,7 +137,8 @@ module BimaDeployment
       end
     end
 
-    protected
+
+    private
 
     attr_reader :git_repository, :package_archive, :s3_bucket
 
