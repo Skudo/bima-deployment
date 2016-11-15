@@ -162,7 +162,10 @@ module BimaDeployment
       options[:verbose] ||= true
 
       logger.info(command) if options[:verbose]
-      %x(#{command})
+      output  = %x(#{command})
+      raise ChildProcessError.new(output)  unless $?.success?
+
+      output
     end
   end
 end
