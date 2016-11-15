@@ -3,6 +3,7 @@ require 'logger'
 require 'rake'
 
 require 'bima_deployment/version'
+require 'bima_deployment/errors'
 require 'bima_deployment/configuration'
 require 'bima_deployment/deployment'
 require 'bima_deployment/package'
@@ -39,17 +40,11 @@ module BimaDeployment
       self.configure do |config|
         config.deployment = deployment_config[:deployment]
         config.notification = deployment_config[:notification]
+        config.package = deployment_config[:package]
       end
     end
-
-    initializer_path = Rails.root.join('config', 'initializers', self.config.configuration_file)
-    if File.exists?(initializer_path)
-      puts "Using deployment configuration from #{initializer_path}"
-      require initializer_path
-    else
-      puts "No deployment configuration found => using defaults"
-    end
   end
+
 
   #
   # Initial configuration
@@ -60,23 +55,10 @@ module BimaDeployment
   end
   config = Configuration.new
   config.logger = logger
-  config.configuration_file = 'deployment.rb'
   config.s3 = {
     bucket_name: 'bima-releases-ireland',
     region: 'eu-west-1'
   }
-
-  config.included = %w()
-
-  config.excluded = %w(
-    .gitignore
-    .travis.yml
-    .rspec
-    .git
-    client/node_modules
-    spec
-    test
-  )
 
   self.config = config
 

@@ -29,6 +29,11 @@ task :package, [:git_tag] do |_, args|
     package:upload
     package:cleanup
   ).each do |task|
-    Rake::Task[task].invoke(git_tag)
+    begin
+      Rake::Task[task].invoke(git_tag)
+    rescue BimaDeployment::ChildProcessError
+      exit(1)
+    end
   end
+
 end

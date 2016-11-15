@@ -5,6 +5,16 @@ defaults:
     slack:
       url: '<%= options[:slack] %>'
       enabled: <%= options[:notifications] %>
+  package: &package_defaults
+    included: []
+    excluded:
+      - '.gitignore'
+      - '.travis.yml'
+      - '.rspec'
+      - '.git'
+      - 'client/node_modules'
+      - 'spec'
+      - 'test'
 
 development:
   deployment:
@@ -12,6 +22,8 @@ development:
     stack: '<%= name %> (Staging)'
     app: '<%= name.downcase %>_develop'
   notification:
+  package:
+    <<: *package_defaults
 
 staging:
   deployment:
@@ -19,6 +31,8 @@ staging:
     stack: '<%= name %> (Staging)'
     app: '<%= name.downcase %>_staging'
   notification:
+  package:
+    <<: *package_defaults
 
 production:
   deployment:
@@ -27,3 +41,5 @@ production:
     app: '<%= name.downcase %>'
   notification:
     <<: *notification_defaults
+  package:
+    <<: *package_defaults
