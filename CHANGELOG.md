@@ -1,5 +1,10 @@
 ## Changelog
 
+#### 2.0.4
+- remove deployment initializer
+- fix bug where AWS Opsworks deployment fails
+- exit with error, when git reference is invalid
+
 #### 2.0.3
 - bugfix for missing `config` files
 
@@ -12,10 +17,10 @@
 - bugfix for projects without a `config/deployment.yml` file yet
 
 #### 2.0.0
-- minimum supported `aws-sdk` version now is 2.4.0 (was: 2.0.0)      
+- minimum supported `aws-sdk` version now is 2.4.0 (was: 2.0.0)
 - added `deploy` rake tasks
 - added Slack notification after successful deployments
-- added `bima_deployment:install` generator for Rails  
+- added `bima_deployment:install` generator for Rails
 
 #### 1.1.0
 - changed API: `BimaDeployment.included` and `.excluded`
