@@ -9,9 +9,14 @@ namespace :deploy do
       BimaDeployment.load_configuration(environment)
       git_tag = args[:git_tag] || default_git_tag
       deployment = BimaDeployment::Deployment.new(environment, git_tag)
-      deployment.confirm
-      deployment.deploy
-      deployment.notify
+
+      begin
+        deployment.confirm
+        deployment.deploy
+        deployment.notify
+      rescue BimaDeployment::ChildProcessError
+        exit(1)
+      end
     end
   end
 end
