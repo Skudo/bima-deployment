@@ -3,6 +3,7 @@ require 'logger'
 require 'rake'
 
 require 'bima_deployment/version'
+require 'bima_deployment/errors'
 require 'bima_deployment/configuration'
 require 'bima_deployment/deployment'
 require 'bima_deployment/package'
