@@ -1,4 +1,7 @@
-## Changelog
+# Changelog
+
+#### 2.0.5
+- add config for deployment.migrate true / false (for Opsworks deployment)
 
 #### 2.0.4
 - remove deployment initializer
