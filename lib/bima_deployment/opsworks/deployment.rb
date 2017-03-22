@@ -3,14 +3,15 @@ module BimaDeployment
     class Deployment
       attr_reader :client, :deployment_id
 
-      def self.create(stack:, app:, comment: '', client:)
+      def self.create(stack:, app:, comment: '', client:, migrate: true)
+        args = {}
+        args['migrate'] = ['true']  if migrate
+
         deployment = client.create_deployment(stack_id: stack.stack_id,
                                               app_id: app.app_id,
                                               command: {
                                                 name: 'deploy',
-                                                args: {
-                                                  'migrate' => ['true']
-                                                }
+                                                args: args,
                                               },
                                               comment: comment)
         new(deployment.deployment_id, client)
