@@ -42,7 +42,8 @@ module BimaDeployment
           @deployment = BimaDeployment::Opsworks::Deployment.create(stack: stack,
                                                                     app: app,
                                                                     comment: "\"#{git_tag}\", powered by rake task.",
-                                                                    client: client)
+                                                                    client: client,
+                                                                    migrate: migrate?)
           logger.info("Deploying ref \"#{git_tag}\" on #{environment}.")
           poll_until_done
         end
@@ -61,6 +62,7 @@ module BimaDeployment
             notifier.notify(@deployment.user, app_name, git_tag, @deployment.url)
           end
         end
+
 
         protected
 
@@ -90,6 +92,10 @@ module BimaDeployment
         def app
           return @app if defined?(@app)
           @app = BimaDeployment::Opsworks::App.find(stack: stack, app_name: app_name, client: client)
+        end
+
+        def migrate?
+          !(config['migrate'] == false)
         end
 
         def poll_until_done

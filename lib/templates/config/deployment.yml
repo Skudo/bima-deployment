@@ -1,6 +1,7 @@
 defaults:
   deployment: &deployment_defaults
     strategy: '<%= options[:strategy] %>'
+    migrate: true
   notification: &notification_defaults
     slack:
       url: '<%= options[:slack] %>'
