@@ -51,6 +51,15 @@ module BimaDeployment
       File.exists?(path)
     end
 
+    def yarn_enabled?
+      path = File.join(git_repository, 'client', 'yarn.lock')
+      File.exists?(path)
+    end
+
+    def js_package_manager
+      yarn_enabled? ? 'yarn' : 'npm'
+    end
+
     def release?
       !!(git_tag =~ /^[[:digit:]]+\.[[:digit:]]+(\.[[:digit:]]+)?$/)
     end
@@ -73,7 +82,7 @@ module BimaDeployment
 
 
         if client_app?
-          sh 'cd client && npm install > /dev/null'
+          sh "cd client && #{js_package_manager} install > /dev/null"
           sh 'cd client && grunt build --json > /dev/null'
         end
       end
